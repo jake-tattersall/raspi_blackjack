@@ -5,7 +5,7 @@
 #include "card.h"
 
 char values[VALUES_LEN][3] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-char *suits[SUITS_LEN] = {"♥", "♠", "♦", "♣"}; // must change
+char *suits[SUITS_LEN] = {"H", "S", "D", "C"}; //{"♥", "♠", "♦", "♣"}; 
 
 struct Card* createCard(char* suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
