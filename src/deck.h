@@ -1,7 +1,7 @@
 #ifndef DECK_H
 #define DECK_H
 
-#include "cards.h"
+#include "card.h"
 
 #define MAXDECKS 4
 #define MAXCARDS 208 // 52 * 4 decks

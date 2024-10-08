@@ -1,12 +1,10 @@
-#include "cards.h"
+#include <stdlib.h>
+
+#include "deck.h"
+#include "card.h"
 
 #define MAXDECKS 4
 #define MAXCARDS 208 // 52 * 4 decks
-
-struct Deck {
-    struct Card** deck;
-    int len;
-};
 
 struct Deck* createDeck() {
     struct Deck* d = (struct Deck*) malloc(sizeof(struct Deck*));

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cards.h"
+#include "card.h"
 #include "deck.h"
 
 int main() {

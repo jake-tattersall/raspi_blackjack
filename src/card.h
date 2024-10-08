@@ -1,5 +1,5 @@
-#ifndef CARDS_H
-#define CARDS_H
+#ifndef CARD_H
+#define CARD_H
 
 #define VALUES_LEN 13
 #define SUITS_LEN 4 

@@ -1,16 +1,14 @@
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "card.h"
 
 #define VALUES_LEN 13
 #define SUITS_LEN 4 
 
 char values[VALUES_LEN][3] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-char suits[SUITS_LEN] = {'♥', '♠', '♦', '♣'};
-
-struct Card {
-    char *value;
-    char suit;
-};
+char suits[SUITS_LEN] = {'♥', '♠', '♦', '♣'}; // must change
 
 struct Card* createCard(char suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
