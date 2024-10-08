@@ -5,14 +5,14 @@
 #define SUITS_LEN 4 
 
 extern char values[VALUES_LEN][3];
-extern char suits[SUITS_LEN];
+extern char *suits[SUITS_LEN];
 
 struct Card {
     char *value;
-    char suit;
+    char *suit;
 };
 
-struct Card* createCard(char suit, char* value);
+struct Card* createCard(char *suit, char* value);
 
 void printCard(struct Card *c);
 int cardInternalValue(struct Card *c);

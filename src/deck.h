@@ -14,6 +14,7 @@ struct Deck {
 
 struct Deck* createDeck();
 struct Card* draw(struct Deck* d);
+void shuffle(struct Deck* d);
 void freeDeck(struct Deck* d);
 
 #endif

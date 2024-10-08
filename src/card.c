@@ -4,16 +4,15 @@
 
 #include "card.h"
 
-#define VALUES_LEN 13
-#define SUITS_LEN 4 
-
 char values[VALUES_LEN][3] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-char suits[SUITS_LEN] = {'♥', '♠', '♦', '♣'}; // must change
+char *suits[SUITS_LEN] = {"♥", "♠", "♦", "♣"}; // must change
 
-struct Card* createCard(char suit, char* value) {
+struct Card* createCard(char* suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
+    c->suit = (char*) malloc(3 * sizeof(char));
+    c->value = (char*) malloc(10 * sizeof(char));
     strcpy(c->value, value);
-    c->suit = suit;
+    strcpy(c->suit, suit);
     return c;
 }
 
@@ -59,5 +58,6 @@ int getBJValue(struct Card *c, int total) {
 
 void freeCard(struct Card* c) {
     free(c->value);
+    free(c->suit);
     free(c);
 }
