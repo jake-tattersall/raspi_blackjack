@@ -4,12 +4,12 @@
 #define VALUES_LEN 13
 #define SUITS_LEN 4 
 
-extern char values[VALUES_LEN][3];
+extern char *values[VALUES_LEN];
 extern char *suits[SUITS_LEN];
 
 struct Card {
-    char *value;
-    char *suit;
+    char *value; // 2,3,4...9,10,J,Q,K,A
+    char *suit; // (H)eart, (S)pade, (D)iamond, (C)lub
 };
 
 struct Card* createCard(char *suit, char* value);

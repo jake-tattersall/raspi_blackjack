@@ -4,9 +4,12 @@
 
 #include "card.h"
 
-char values[VALUES_LEN][3] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+char *values[VALUES_LEN] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 char *suits[SUITS_LEN] = {"H", "S", "D", "C"}; //{"♥", "♠", "♦", "♣"}; 
 
+
+// Creates a card structure filled with the passed values
+// Returns the filled card
 struct Card* createCard(char* suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
     c->suit = (char*) malloc(3 * sizeof(char));
@@ -16,10 +19,13 @@ struct Card* createCard(char* suit, char* value) {
     return c;
 }
 
+// Displays the card in the way of "{Suit}{Value}"
 void printCard(struct Card *c) {
-    printf("%c%c\n", c->suit, c->value);
+    printf("%c%c ", c->suit, c->value);
 }
 
+// Gets the card's heirarchical value
+// Numbers are number value, J = 11, Q = 12, K = 13, A = 14
 int cardInternalValue(struct Card *c) {
     if (strcmp(c->value, "J") == 0)
         return 11;
@@ -28,14 +34,14 @@ int cardInternalValue(struct Card *c) {
     else if (strcmp(c->value, "K") == 0)
         return 13;
     else if (strcmp(c->value, "A") == 0)
-        return 13;
+        return 14;
     else if (strcmp(c->value, "10") == 0)
         return 10;
     else 
         return c->value[0] - 48;
 }
 
-
+// Gets the blackjack value of the card based on the hand total (Ace is 1 or 11)
 int getBJValue(struct Card *c, int total) {
     if (strcmp(c->value, "10") == 0)
         return 10;
@@ -55,7 +61,7 @@ int getBJValue(struct Card *c, int total) {
         return c->value[0] - 48;
 }
 
-
+// Frees the memory of the card's properties and the card itself
 void freeCard(struct Card* c) {
     free(c->value);
     free(c->suit);

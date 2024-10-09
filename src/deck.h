@@ -3,17 +3,15 @@
 
 #include "card.h"
 
-#define MAXDECKS 4
-#define MAXCARDS 208 // 52 * 4 decks
-
 struct Deck {
-    struct Card** deck;
-    int len;
+    struct Card** deck; // The list of cards in the deck
+    int len; // Number of cards in the deck
 };
 
 
-struct Deck* createDeck();
+struct Deck* createDeck(int numDecks);
 struct Card* draw(struct Deck* d);
+struct Card* peekDeck(struct Deck* d);
 void shuffle(struct Deck* d);
 void freeDeck(struct Deck* d);
 
