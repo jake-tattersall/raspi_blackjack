@@ -12,8 +12,8 @@ char *suits[SUITS_LEN] = {"H", "S", "D", "C"}; //{"♥", "♠", "♦", "♣"};
 // Returns the filled card
 struct Card* createCard(char* suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
-    c->suit = (char*) malloc(3 * sizeof(char));
-    c->value = (char*) malloc(3 * sizeof(char));
+    c->suit = malloc(3 * sizeof(char));
+    c->value = malloc(3 * sizeof(char));
     strcpy(c->value, value);
     strcpy(c->suit, suit);
     return c;
@@ -21,7 +21,7 @@ struct Card* createCard(char* suit, char* value) {
 
 // Displays the card in the way of "{Suit}{Value} "
 void printCard(struct Card *c) {
-    printf("%c%c ", c->suit, c->value);
+    printf("%s%s ", c->suit, c->value);
 }
 
 // Gets the card's heirarchical value
@@ -43,10 +43,6 @@ int cardInternalValue(struct Card *c) {
 
 // Gets the blackjack value of the card based on the hand total (Ace is 1 or 11)
 int getBJValue(struct Card *c, int total) {
-    printf("1");
-    printf(" %d ", total);
-    printf(" %s ", c->suit);
-    printf(" %s ", c->value);
     if (strcmp(c->value, "10") == 0)
         return 10;
     else if (strcmp(c->value, "J") == 0)
@@ -67,6 +63,7 @@ int getBJValue(struct Card *c, int total) {
 
 // Frees the memory of the card's properties and the card itself
 void freeCard(struct Card* c) {
+    if (c == NULL) return;
     free(c->value);
     free(c->suit);
     free(c);

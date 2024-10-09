@@ -69,6 +69,7 @@ void nextRoundPlayer(struct Player* p) {
 
 // Frees all memory of player
 void freePlayer(struct Player* p) {
+    if (p == NULL) return;
     for (int i = 0; i < p->numHands; i++) {
         freeHand(p->hands[i]);
     }

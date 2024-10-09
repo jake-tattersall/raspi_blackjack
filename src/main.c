@@ -20,7 +20,7 @@ void freeAll(struct Player* player, struct Dealer* dealer, struct Deck* deck);
 int main() {
     //setlocale(LC_ALL, "");
 
-    struct Deck* deck = createDeck(MAXDECKS);
+    struct Deck* deck = NULL;// = createDeck(MAXDECKS);
     struct Player* player = createPlayer(deck);
     struct Dealer* dealer = createDealer(deck);
 
@@ -33,31 +33,21 @@ int main() {
         reshuffle(player, dealer, &deck);
         addHand(player);
         checkForTwoDealer(dealer);
-        //printCard(dealer->hand->cards[0]);
-        printf("1");
+
         while (player->currentHand < player->numHands) { // Each run is a new decision (Hit, Stay, etc.)
-            printf("2");
             struct Hand* current = getCurrentHand(player);
-            printf("3");
             checkForTwoPlayer(player);
-            printf("4");
+
             int currentPlayerValue = getHandValue(current);
-            printf("5");
             int dealerValue = getHandValue(dealer->hand);
             
-            
-            printf("%d %d\n", dealerValue, currentPlayerValue);
             if (dealerValue == 21 && currentPlayerValue == 21) { // Both got BJ
                 // do bets and stuff
                 // print
-                printf("Press enter to continue...");
-                scanf("");
                 break;
             } else if (dealerValue == 21) { // Dealer got BJ
                 // do bets and stuff
                 // print
-                printf("Press enter to continue...");
-                scanf("");
                 break;
             } else if (currentPlayerValue == 21) { // Player got BJ
                 // do bets and stuff

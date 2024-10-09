@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -8,14 +9,14 @@
 
 // Creates a deck filled with numDecks decks. Does not shuffle the deck
 struct Deck* createDeck(int numDecks) {
-    int totalCards = NUMCARDS * numDecks;
-    struct Deck* d = (struct Deck*) malloc(sizeof(struct Deck));
-    d->deck = (struct Card**) malloc(totalCards * sizeof(struct Card*));
+    struct Deck* d = malloc(sizeof(struct Deck));
+    d->deck = malloc(NUMCARDS * numDecks * sizeof(struct Card*));
+    d->len = 0;
     
-    for (d->len = 0; d->len < totalCards; (d->len)++) {
+    for (int i = 0; i < numDecks; i++) {
         for (int j = 0; j < SUITS_LEN; j++) {
             for (int k = 0; k < VALUES_LEN; k++) {
-                d->deck[d->len] = createCard(suits[j], values[k]);
+                d->deck[(d->len)++] = createCard(suits[j], values[k]);
             }
         }
     }
@@ -29,7 +30,7 @@ struct Card* draw(struct Deck* d) {
     if (d->len == 0) 
         return NULL;
 
-    return d->deck[d->len--];
+    return d->deck[--(d->len)];
 }
 
 
@@ -39,7 +40,7 @@ struct Card* peekDeck(struct Deck* d) {
     if (d->len == 0) 
         return NULL;
 
-    return d->deck[d->len];
+    return d->deck[d->len - 1];
 }
 
 
@@ -57,6 +58,7 @@ void shuffle(struct Deck* d) {
 
 // Frees all cards in the deck, then the deck itself
 void freeDeck(struct Deck* d) {
+    if (d == NULL) return;
     for (int i = 0; i < d->len; i++) {
         freeCard(d->deck[i]);
     }

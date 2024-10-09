@@ -78,6 +78,7 @@ int canDouble(struct Hand* h) {
 
 // Frees all memory of the hand
 void freeHand(struct Hand* h) {
+    if (h == NULL) return;
     for (int i = 0; i < h->numCards; i++) {
         free(h->cards[i]);
     }

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "deck.h"
@@ -16,6 +17,7 @@ struct Dealer *createDealer(struct Deck *d) {
 struct Card* getDealerTopCard(struct Dealer* dealer) {
     if (dealer->hand->numCards == 0 || dealer->hand == NULL) 
         return NULL;
+
     return peekHand(dealer->hand);
 }
 
@@ -42,6 +44,7 @@ void nextRoundDealer(struct Dealer *dealer) {
 
 // Frees all memory in the dealer
 void freeDealer(struct Dealer *dealer) {
+    if (dealer == NULL) return;
     freeDeck(dealer->deck);
     free(dealer);
 }
