@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "hand.h"
@@ -37,6 +38,12 @@ struct Card* removeLastCard(struct Hand* h) {
 
 // Returns the total BlackJack value of the hand
 int getHandValue(struct Hand* h) {
+
+    // THIS NEEDS SORTING ACES AT END
+    // Malloc an int array of numCards size. int len = 0
+    // If ace is card, add index to array
+    // After for loop finished, for loop over the array
+
     int total = 0;
     for (int i = 0; i < h->numCards; i++) {
         total += getBJValue(h->cards[i], total);

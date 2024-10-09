@@ -11,11 +11,11 @@ struct Deck* createDeck(int numDecks) {
     int totalCards = NUMCARDS * numDecks;
     struct Deck* d = (struct Deck*) malloc(sizeof(struct Deck));
     d->deck = (struct Card**) malloc(totalCards * sizeof(struct Card*));
-    d->len = 0;
-    for (int i = 0; i < totalCards; i++) {
+    
+    for (d->len = 0; d->len < totalCards; (d->len)++) {
         for (int j = 0; j < SUITS_LEN; j++) {
             for (int k = 0; k < VALUES_LEN; k++) {
-                d->deck[d->len++] = createCard(suits[j], values[k]);
+                d->deck[d->len] = createCard(suits[j], values[k]);
             }
         }
     }

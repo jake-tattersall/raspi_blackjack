@@ -27,20 +27,26 @@ int main() {
     player->money = 1000;
 
     printf("Starting...\n\n");
-    Sleep(2000);
+    //Sleep(2000);
 
     while (player->money > 0) { // Each run is a new deal
         reshuffle(player, dealer, &deck);
         addHand(player);
         checkForTwoDealer(dealer);
-
+        //printCard(dealer->hand->cards[0]);
+        printf("1");
         while (player->currentHand < player->numHands) { // Each run is a new decision (Hit, Stay, etc.)
-            
+            printf("2");
             struct Hand* current = getCurrentHand(player);
+            printf("3");
             checkForTwoPlayer(player);
-
-            int dealerValue = getHandValue(dealer->hand);
+            printf("4");
             int currentPlayerValue = getHandValue(current);
+            printf("5");
+            int dealerValue = getHandValue(dealer->hand);
+            
+            
+            printf("%d %d\n", dealerValue, currentPlayerValue);
             if (dealerValue == 21 && currentPlayerValue == 21) { // Both got BJ
                 // do bets and stuff
                 // print

@@ -13,13 +13,13 @@ char *suits[SUITS_LEN] = {"H", "S", "D", "C"}; //{"♥", "♠", "♦", "♣"};
 struct Card* createCard(char* suit, char* value) {
     struct Card *c = (struct Card*) malloc(sizeof(struct Card));
     c->suit = (char*) malloc(3 * sizeof(char));
-    c->value = (char*) malloc(10 * sizeof(char));
+    c->value = (char*) malloc(3 * sizeof(char));
     strcpy(c->value, value);
     strcpy(c->suit, suit);
     return c;
 }
 
-// Displays the card in the way of "{Suit}{Value}"
+// Displays the card in the way of "{Suit}{Value} "
 void printCard(struct Card *c) {
     printf("%c%c ", c->suit, c->value);
 }
@@ -43,6 +43,10 @@ int cardInternalValue(struct Card *c) {
 
 // Gets the blackjack value of the card based on the hand total (Ace is 1 or 11)
 int getBJValue(struct Card *c, int total) {
+    printf("1");
+    printf(" %d ", total);
+    printf(" %s ", c->suit);
+    printf(" %s ", c->value);
     if (strcmp(c->value, "10") == 0)
         return 10;
     else if (strcmp(c->value, "J") == 0)

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "player.h"
@@ -8,7 +9,7 @@
 // player->bets and player->hands are set to NULL
 // p->money set to -1
 struct Player* createPlayer(struct Deck* d) {
-    struct Player *p = malloc(sizeof(struct Player));
+    struct Player *p = (struct Player*) malloc(sizeof(struct Player));
     p->bets = NULL;
     p->hands = NULL;
     p->deck = d;
@@ -29,14 +30,14 @@ struct Hand* getCurrentHand(struct Player *p) {
 void addHand(struct Player* p) {
     if (p->hands == NULL) { 
         p->numHands++;
-        p->hands = malloc(sizeof(struct Hand*));
+        p->hands = malloc(sizeof(struct Hand*)); 
         p->bets = malloc(sizeof(int));
-        p->currentHand = 0;
     } else {
         p->numHands++;
         p->hands = realloc(p->hands, p->numHands * sizeof(struct Hand*));
         p->bets = realloc(p->bets, p->numHands * sizeof(int));
     }
+    p->hands[p->numHands-1] = createHand();
 }
 
 // Makes sure the player's hand has at least 2 cards
