@@ -3,9 +3,7 @@
 #include <windows.h>
 #include <locale.h>
 
-#include "card.h"
 #include "deck.h"
-#include "hand.h"
 #include "player.h"
 #include "dealer.h"
 
@@ -20,6 +18,8 @@ void reshuffle(struct Player* player, struct Dealer* dealer, struct Deck** deck)
 void freeAll(struct Player* player, struct Dealer* dealer, struct Deck* deck);
 
 int main() {
+    //setlocale(LC_ALL, "");
+
     struct Deck* deck = createDeck(MAXDECKS);
     struct Player* player = createPlayer(deck);
     struct Dealer* dealer = createDealer(deck);
@@ -136,13 +136,15 @@ int main() {
             
             system("cls");
 
-
+            // Handle something here
 
         } // End of while (player->currentHand < player->numHands)
         
+        // Handle something here
 
     } // End of while (player->money > 0)
 
+    printf("Thank you for playing!\n");
     freeAll(player, dealer, deck);
 
     return 0;
