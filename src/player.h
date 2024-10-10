@@ -15,8 +15,14 @@ struct Player {
 struct Player* createPlayer(struct Deck* d);
 struct Hand* getCurrentHand(struct Player *p);
 void addHand(struct Player* p);
+void addBet(struct Player* p, int bet);
+void doubleBet(struct Player* p);
+int getCurrentBet(struct Player* p);
+void payday(struct Player* p);
+void blackjackPayday(struct Player* p);
+void push(struct Player* p);
 void checkForTwoPlayer(struct Player* p);
-int checkBustedPlayer(struct Player* p);
+int playerBust(struct Player* p);
 void nextRoundPlayer(struct Player* p);
 void freePlayer(struct Player* p);
 

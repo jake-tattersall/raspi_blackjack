@@ -51,6 +51,11 @@ int getHandValue(struct Hand* h) {
     return total;
 }
 
+
+int isBlackjack(struct Hand* h) {
+    return getHandValue(h) == 21 && h->numCards == 2;
+}
+
 // Returns the first [0] card in the hand.
 // If the hand is empty, returns NULL
 struct Card* peekHand(struct Hand* h) {

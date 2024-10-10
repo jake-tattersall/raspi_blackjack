@@ -30,7 +30,7 @@ void checkForTwoDealer(struct Dealer *dealer) {
 }
 
 // Returns 1 if the dealer has busted, otherwise 2
-int checkBustedDealer(struct Dealer *dealer) {
+int dealerBust(struct Dealer *dealer) {
     if (getHandValue(dealer->hand) > 21) 
         return 1;
     return 0;

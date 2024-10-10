@@ -12,6 +12,7 @@ struct Hand* createHand();
 void addCard(struct Hand* h, struct Card* c);
 struct Card* removeLastCard(struct Hand* h);
 int getHandValue(struct Hand* h);
+int isBlackjack(struct Hand* h);
 struct Card* peekHand(struct Hand* h);
 void printHand(struct Hand* h);
 int canSplit(struct Hand* h);

@@ -22,6 +22,9 @@ struct Player* createPlayer(struct Deck* d) {
 
 // Returns the current hand
 struct Hand* getCurrentHand(struct Player *p) {
+    if (p->currentHand >= p->numHands)
+        return NULL;
+
     return p->hands[p->currentHand];
 }
 
@@ -31,13 +34,50 @@ void addHand(struct Player* p) {
     if (p->hands == NULL) { 
         p->numHands++;
         p->hands = malloc(sizeof(struct Hand*)); 
-        p->bets = malloc(sizeof(int));
     } else {
         p->numHands++;
         p->hands = realloc(p->hands, p->numHands * sizeof(struct Hand*));
-        p->bets = realloc(p->bets, p->numHands * sizeof(int));
     }
     p->hands[p->numHands-1] = createHand();
+}
+
+
+void addBet(struct Player* p, int bet) {
+    if (p->bets == NULL) {
+        p->bets = malloc(sizeof(int));
+    } else {
+        p->bets = realloc(p->bets, p->numHands * sizeof(int));
+    }
+    p->bets[p->numHands - 1] = bet;
+    p->money -= bet;
+}
+
+
+void doubleBet(struct Player* p) {
+    int temp = getCurrentBet(p);
+    if (2 * temp > p->money + temp)
+        return;
+
+    p->bets[p->currentHand] = 2 * temp;
+    p->money -= temp;
+}
+
+
+int getCurrentBet(struct Player* p) {
+    return p->bets[p->currentHand];
+}
+
+
+void payday(struct Player* p) {
+    p->money += 2 * getCurrentBet(p);
+}
+
+void blackjackPayday(struct Player* p) {
+    p->money += 2.5 * getCurrentBet(p);
+}
+
+void push(struct Player* p) {
+    p->money += getCurrentBet(p);
 }
 
 // Makes sure the player's hand has at least 2 cards
@@ -48,7 +88,7 @@ void checkForTwoPlayer(struct Player* p) {
 }
 
 // Returns 1 if the current hand has busted, otherwise 2
-int checkBustedPlayer(struct Player* p) {
+int playerBust(struct Player* p) {
     if (getHandValue(getCurrentHand(p)) > 21)
         return 1;
     return 0;
