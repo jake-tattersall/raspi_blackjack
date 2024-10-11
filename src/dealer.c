@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "deck.h"
@@ -37,7 +36,7 @@ int dealerBust(struct Dealer *dealer) {
 }
 
 // Preps the dealer for the next deal
-void nextRoundDealer(struct Dealer *dealer) {
+void nextDealDealer(struct Dealer *dealer) {
     free(dealer->hand);
     dealer->hand = NULL;
 }

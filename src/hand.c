@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "hand.h"
 #include "card.h"
@@ -39,19 +39,32 @@ struct Card* removeLastCard(struct Hand* h) {
 // Returns the total BlackJack value of the hand
 int getHandValue(struct Hand* h) {
 
-    // THIS NEEDS SORTING ACES AT END
     // Malloc an int array of numCards size. int len = 0
     // If ace is card, add index to array
     // After for loop finished, for loop over the array
+    struct Card **aces = malloc(h->numCards * sizeof(struct Card*));
+    int numAces = 0;
 
+    // Get total of non-ace cards
     int total = 0;
     for (int i = 0; i < h->numCards; i++) {
-        total += getBJValue(h->cards[i], total);
+        if (strcmp(h->cards[i]->value, "A") == 0) {
+            aces[numAces++] = h->cards[i];
+        } else {
+            total += getBJValue(h->cards[i], total);
+        }
     }
+    // Add on aces
+    for (int i = 0; i < numAces; i++) {
+        total += getBJValue(aces[i], total);
+    }
+    // Free array
+    free(aces);
+
     return total;
 }
 
-
+// Returns true if the hand is pure blackjack (21 and 2 cards)
 int isBlackjack(struct Hand* h) {
     return getHandValue(h) == 21 && h->numCards == 2;
 }

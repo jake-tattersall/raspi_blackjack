@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "player.h"
@@ -41,7 +40,8 @@ void addHand(struct Player* p) {
     p->hands[p->numHands-1] = createHand();
 }
 
-
+// Adds the passed bet to the last hand.
+// Also subtracts the bet from the player's money
 void addBet(struct Player* p, int bet) {
     if (p->bets == NULL) {
         p->bets = malloc(sizeof(int));
@@ -52,7 +52,7 @@ void addBet(struct Player* p, int bet) {
     p->money -= bet;
 }
 
-
+// Doubles the bet of the current hand (intended for Double Down)
 void doubleBet(struct Player* p) {
     int temp = getCurrentBet(p);
     if (2 * temp > p->money + temp)
@@ -62,20 +62,22 @@ void doubleBet(struct Player* p) {
     p->money -= temp;
 }
 
-
+// Gets the bet of the current hand
 int getCurrentBet(struct Player* p) {
     return p->bets[p->currentHand];
 }
 
-
+// Win the current bet
 void payday(struct Player* p) {
     p->money += 2 * getCurrentBet(p);
 }
 
+// Win the current bet at BJ rate (1.5x)
 void blackjackPayday(struct Player* p) {
     p->money += 2.5 * getCurrentBet(p);
 }
 
+// Get money back from current bet
 void push(struct Player* p) {
     p->money += getCurrentBet(p);
 }
@@ -95,7 +97,7 @@ int playerBust(struct Player* p) {
 }
 
 // Preps the player for the next deal
-void nextRoundPlayer(struct Player* p) {
+void nextDealPlayer(struct Player* p) {
     for (int i = 0; i < p->numHands; i++) {
         freeHand(p->hands[i]);
     }

@@ -12,7 +12,7 @@ struct Dealer* createDealer(struct Deck* d);
 struct Card* getDealerTopCard(struct Dealer* dealer);
 void checkForTwoDealer(struct Dealer* d);
 int dealerBust(struct Dealer* d);
-void nextRoundDealer(struct Dealer* d);
+void nextDealDealer(struct Dealer* d);
 void freeDealer(struct Dealer* d);
 
 

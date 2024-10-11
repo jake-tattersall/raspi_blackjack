@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -32,17 +31,6 @@ struct Card* draw(struct Deck* d) {
 
     return d->deck[--(d->len)];
 }
-
-
-// Returns the first card of the deck. If the deck is empty, returns NULL.
-// The card is NOT removed from the deck
-struct Card* peekDeck(struct Deck* d) {
-    if (d->len == 0) 
-        return NULL;
-
-    return d->deck[d->len - 1];
-}
-
 
 // Shuffles the deck
 void shuffle(struct Deck* d) {

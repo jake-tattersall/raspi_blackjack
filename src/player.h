@@ -23,7 +23,7 @@ void blackjackPayday(struct Player* p);
 void push(struct Player* p);
 void checkForTwoPlayer(struct Player* p);
 int playerBust(struct Player* p);
-void nextRoundPlayer(struct Player* p);
+void nextDealPlayer(struct Player* p);
 void freePlayer(struct Player* p);
 
 

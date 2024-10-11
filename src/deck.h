@@ -11,7 +11,6 @@ struct Deck {
 
 struct Deck* createDeck(int numDecks);
 struct Card* draw(struct Deck* d);
-struct Card* peekDeck(struct Deck* d);
 void shuffle(struct Deck* d);
 void freeDeck(struct Deck* d);
 
