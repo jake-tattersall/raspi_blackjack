@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 a.exe
 .vscode/settings.json
+WiringPi/
