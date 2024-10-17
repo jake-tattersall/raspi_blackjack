@@ -1,7 +1,9 @@
 #include <stdlib.h>
 
-#include "deck.h"
 #include "dealer.h"
+
+#include "deck.h"
+
 
 // Creates a dealer. dealer->hand is set to NULL
 struct Dealer *createDealer(struct Deck *d) {

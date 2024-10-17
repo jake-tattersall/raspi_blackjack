@@ -2,6 +2,7 @@
 #include <time.h>
 
 #include "deck.h"
+
 #include "card.h"
 
 #define NUMCARDS 52
