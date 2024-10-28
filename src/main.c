@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
+#include <string.h>
 #include <locale.h>
 
 #include "deck.h"
 #include "player.h"
 #include "dealer.h"
 
-#define MAXDECKS 4
-#define BET 100
+#define MAXDECKS 4 // Number of card decks in the shoe
+#define BET 1 // Fixed Bet 1 credit per hand
 
 char split_choices[4] = {'1', '2', '3', '4'};
 char double_choices[3] = {'1', '2', '3'};
@@ -25,7 +25,7 @@ int main() {
     struct Player* player = createPlayer(deck); // The player
     struct Dealer* dealer = createDealer(deck); // The dealer
 
-    player->money = 1000;
+    player->money = BET * 10;
 
     printf("Starting...\n\n");
     //Sleep(2000);
@@ -33,7 +33,7 @@ int main() {
     while (player->money > 0) { // Each run is a new deal
 
         // This is where the program would ask for a bet if I wanted to do it that way
-        // If no code here, use the default BET everytime
+        // Instead, uses the default BET everytime
 
         // Shuffle the deck, give the player a hand, and give the dealer 2 cards
         reshuffle(player, dealer, &deck);
@@ -225,7 +225,7 @@ int main() {
         printf("The dealer has ");
         printHand(dealer->hand);
         printf("for a total of %d\n", dealerVal);
-        Sleep(500);
+        //Sleep(500);
 
         // Dealer stays on soft 17
         while (dealerVal < 17) {
@@ -235,7 +235,7 @@ int main() {
             printf("The dealer has ");
             printHand(dealer->hand);
             printf("for a total of %d\n", dealerVal);
-            Sleep(500);
+            //Sleep(500);
         }
 
         // Process bets for each hand
@@ -261,7 +261,7 @@ int main() {
                 printf("This hand tied. No money payed.\n");
                 push(player);
             }
-            Sleep(500);
+            //Sleep(500);
         }
 
         // Show player's new balance after all hands cleared
