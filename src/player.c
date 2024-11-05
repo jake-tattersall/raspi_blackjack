@@ -73,9 +73,9 @@ void payday(struct Player* p) {
     p->money += 2 * getCurrentBet(p);
 }
 
-// Win the current bet at BJ rate (1.5x)
+// Win the current bet at BJ rate (2x)
 void blackjackPayday(struct Player* p) {
-    p->money += 2.5 * getCurrentBet(p);
+    p->money += 3 * getCurrentBet(p);
 }
 
 // Get money back from current bet
