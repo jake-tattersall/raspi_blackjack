@@ -13,7 +13,7 @@
 #include "hand.h"
 #include "player.h"
 
-#define BUTTON 26
+#define BUTTON 25
 #define DEBOUNCE_DELAY 50
 
 #define LCD_ADDR 0x3F
@@ -23,7 +23,7 @@
 #define ENABLE 0b00000100
 
 #define LCD_CLEAR 0x01
-#define LCD_HOME 0x02
+//#define LCD_HOME 0x02
 #define LCD_MAX_LINE_LEN 16
 
 #define ADC_ADDR 0x4B
@@ -40,21 +40,23 @@ char* previous_action;
 void setup() {
     wiringPiSetup();
     pinMode(BUTTON, INPUT);
-    pullUpDnControl(BUTTON_PIN, PUD_UP);
+    pullUpDnControl(BUTTON, PUD_DOWN);
 
     lcd = wiringPiI2CSetup(LCD_ADDR);
 	if (lcd == -1) {
 		printf("bad lcd\n");
-		return 1;
+		return;
 	}
 	
 	adc = wiringPiI2CSetup(ADC_ADDR);
 	if (adc == -1) {
 		printf("bad adc\n");
-		return 1;
+		return;
 	}
 
-    previous_action = "S";
+	lcd_init();
+
+    previous_action = "";
 }
 
 
@@ -62,13 +64,14 @@ void lcd_init() {
     cursor_pos = 0;
     current_line = 1;
 
-	lcd_byte(lcd, 0x33, LCD_CMD); // init
-	lcd_byte(lcd, 0x32, LCD_CMD); // 4-bit mode
-	lcd_byte(lcd, 0x06, LCD_CMD); // Cursor move direction
-	lcd_byte(lcd, 0x0C, LCD_CMD); // Turn on display
-	lcd_byte(lcd, 0x28, LCD_CMD); // 2 line display, 5x8 matrix
-	lcd_byte(lcd, LCD_CLEAR, LCD_CMD); // Clear display
-	lcd_byte(lcd, LCD_HOME, LCD_CMD); // Return home
+	lcd_byte(0x33, LCD_CMD); // init
+	lcd_byte(0x32, LCD_CMD); // 4-bit mode
+	lcd_byte(0x06, LCD_CMD); // Cursor move direction
+	lcd_byte(0x0C, LCD_CMD); // Turn on display
+	lcd_byte(0x28, LCD_CMD); // 2 line display, 5x8 matrix
+	//lcd_byte(LCD_CLEAR, LCD_CMD); // Clear display
+	//lcd_byte(LCD_HOME, LCD_CMD); // Return home
+	lcd_clear();
 	sleep(1);
 }
 
@@ -77,11 +80,11 @@ void lcd_byte(int bits, int mode) {
 	int bits_low = mode | ((bits << 4) & 0xF0) | LCD_BACKLIGHT;
 	
 	wiringPiI2CWrite(lcd, bits_high);
-	lcd_toggle_enable(lcd, bits_high);
+	lcd_toggle_enable(bits_high);
 	lcd_delay();
 	
 	wiringPiI2CWrite(lcd, bits_low);
-	lcd_toggle_enable(lcd, bits_low);
+	lcd_toggle_enable(bits_low);
 	lcd_delay();
 }
 
@@ -100,12 +103,12 @@ void lcd_string(const char *message) {
 		if (cursor_pos >= LCD_MAX_LINE_LEN) {
 			if (current_line < 2) {
 				current_line++;
-				lcd_set_cursor(lcd, current_line, 0);
+				lcd_set_cursor(current_line, 0);
 			} else 
 				break;
 		}
 		
-		lcd_byte(lcd, *message++, LCD_CHR);
+		lcd_byte(*message++, LCD_CHR);
 		cursor_pos++;
 	}
 }
@@ -121,7 +124,7 @@ void lcd_set_cursor(int line, int pos) {
 		return;
 	}
 	
-	lcd_byte(lcd, address, LCD_CMD);
+	lcd_byte(address, LCD_CMD);
 	cursor_pos = pos;
 	current_line = line;
 }
@@ -132,8 +135,9 @@ void lcd_delay() {
 }
 
 void lcd_clear() {
-    lcd_byte(lcd, LCD_CLEAR, LCD_CMD); 
-    lcd_set_cursor(lcd, 1, 0);
+    lcd_byte(LCD_CLEAR, LCD_CMD); 
+    lcd_set_cursor(1, 0);
+    usleep(2000);
 }
 
 
@@ -152,21 +156,22 @@ int read_adc() {
 
 
 void lcd_press_enter() {
-    lcd_set_cursor(lcd, 2, 14);
-    lcd_string(lcd, "PE");
+    lcd_set_cursor(2, 14);
+    lcd_string("PE");
+    wait_for_button(0);
 }
 
 
 void lcd_print_card(struct Card *c) {
-    lcd_string(lcd, c->suit);
-    lcd_string(lcd, c->value);
-    lcd_string(lcd, " ");
+    lcd_string(c->suit);
+    lcd_string(c->value);
+    lcd_string(" ");
 }
 
 
 void lcd_print_hand(struct Hand *h) {
     for (int i = 0; i < h->numCards; i++)
-        lcd_print_card(lcd, h->cards[i]);
+        lcd_print_card(h->cards[i]);
 }
 
 
@@ -174,7 +179,7 @@ void lcd_display_action(char* action) {
     // Useless to continue if already displaying
     if (strcmp(action, previous_action) == 0) return;
 
-    lcd_set_cursor(lcd, 2, 15);
+    lcd_set_cursor(2, 15);
     lcd_string(action);
     previous_action = action;
 }
@@ -194,7 +199,9 @@ int debounce_button() {
 int wait_for_button(int choices_len) {
     while (1) {
         int val = read_adc();
-        if (choices_len == 4) {
+        if (choices_len <= 0) {
+			val = -1;
+        } else if (choices_len == 4) {
             val /= 64;
         } else if (choices_len == 3) {
             val /= 86;
@@ -204,6 +211,8 @@ int wait_for_button(int choices_len) {
         val++;
 
         switch (val) {
+			case 0:
+				break;
             case 1:
                 lcd_display_action("H");
                 break;
@@ -219,7 +228,8 @@ int wait_for_button(int choices_len) {
         }
 
         int button_state = debounce_button();
-        if (button_state == 1) {
+        if (button_state == HIGH) {
+			previous_action = "";
             return val;
         }
     }
