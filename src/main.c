@@ -32,7 +32,7 @@ int main() {
 
     
 
-    FILE fp = fopen(path, "r");
+    FILE *fp = fopen(path, "r");
     if (fp == NULL) { // File DNE, so make it and set money
         fp = fopen(path, "w");
         player->money = BET * 10;
@@ -398,6 +398,7 @@ int main() {
         //printf("Your new balance is %d\n", player->money);
         fp = fopen(path, "w");
         fprintf(fp, "%d\n", player->money);
+        fclose(fp);
 
         lcd_clear();
         int_to_str(player->money);
