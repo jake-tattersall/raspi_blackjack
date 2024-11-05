@@ -7,7 +7,6 @@
 void setup();
 
 void lcd_init();
-void lcd_turnoff();
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
 void lcd_string(const char *message);

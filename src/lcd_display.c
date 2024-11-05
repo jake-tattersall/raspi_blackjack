@@ -23,7 +23,7 @@
 #define ENABLE 0b00000100
 
 #define LCD_CLEAR 0x01
-#define LCD_HOME 0x02
+//#define LCD_HOME 0x02
 #define LCD_MAX_LINE_LEN 16
 
 #define ADC_ADDR 0x4B
