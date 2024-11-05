@@ -4,7 +4,7 @@
 #include "card.h"
 #include "hand.h"
 
-void setup();
+int setup();
 
 void lcd_init();
 void lcd_byte(int bits, int mode);
