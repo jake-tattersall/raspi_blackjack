@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <unistd.h>
@@ -12,55 +13,35 @@
 #include "hand.h"
 #include "player.h"
 
+#define BUTTON 26
+#define DEBOUNCE_DELAY 50
+
+#define LCD_ADDR 0x3F
+#define LCD_CHR 1
+#define LCD_CMD 0
+#define LCD_BACKLIGHT 0x08
+#define ENABLE 0b00000100
+
+#define LCD_CLEAR 0x01
+#define LCD_HOME 0x02
+#define LCD_MAX_LINE_LEN 16
+
+#define ADC_ADDR 0x4B
+#define CHANNEL 0
 
 int lcd;
 int adc;
 
 int cursor_pos;
 int current_line;
+char* previous_action;
 
-
-
-/*
-int main() {
-	
-	 = wiringPiI2CSetup(LCD_ADDR);
-	if (lcd == -1) {
-		printf("bad lcd\n");
-		return 1;
-	}
-	
-	int adc = wiringPiI2CSetup(ADC_ADDR);
-	if (adc == -1) {
-		printf("bad adc\n");
-		return 1;
-	}
-	
-	lcd_init(lcd);
-	
-	printf("hello world\n");
-	
-	lcd_string(lcd, "Hello, World!");
-	
-	sleep(1);
-	
-	lcd_set_cursor(lcd, 2, 0);
-	
-	lcd_string(lcd, "test");
-	
-	while (1) {
-		int pot_val = read_adc(adc);
-		if (pot_val >= 0) {
-			printf("%d\n", pot_val);
-		}
-	}
-	
-	
-	return 0;
-}
-*/
 
 void setup() {
+    wiringPiSetup();
+    pinMode(BUTTON, INPUT);
+    pullUpDnControl(BUTTON_PIN, PUD_UP);
+
     lcd = wiringPiI2CSetup(LCD_ADDR);
 	if (lcd == -1) {
 		printf("bad lcd\n");
@@ -72,6 +53,8 @@ void setup() {
 		printf("bad adc\n");
 		return 1;
 	}
+
+    previous_action = "S";
 }
 
 
@@ -187,3 +170,57 @@ void lcd_print_hand(struct Hand *h) {
 }
 
 
+void lcd_display_action(char* action) {
+    // Useless to continue if already displaying
+    if (strcmp(action, previous_action) == 0) return;
+
+    lcd_set_cursor(lcd, 2, 15);
+    lcd_string(action);
+    previous_action = action;
+}
+
+int debounce_button() {
+    int stable_state = digitalRead(BUTTON); // Initial reading
+    delay(DEBOUNCE_DELAY); // Wait for debounce period
+    int current_state = digitalRead(BUTTON); // Read again
+
+    // If the state is stable, return it
+    if (current_state == stable_state) {
+        return stable_state;
+    }
+    return -1; 
+}
+
+int wait_for_button(int choices_len) {
+    while (1) {
+        int val = read_adc();
+        if (choices_len == 4) {
+            val /= 64;
+        } else if (choices_len == 3) {
+            val /= 86;
+        } else {
+            val /= 128;
+        }
+        val++;
+
+        switch (val) {
+            case 1:
+                lcd_display_action("H");
+                break;
+            case 2:
+                lcd_display_action("S");
+                break;
+            case 3:
+                lcd_display_action("D");
+                break;
+            case 4:
+                lcd_display_action("V");
+                break;
+        }
+
+        int button_state = debounce_button();
+        if (button_state == 1) {
+            return val;
+        }
+    }
+}

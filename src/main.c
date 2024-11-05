@@ -140,7 +140,6 @@ int main() {
             }
 
 
-            char input; // User input
             int invalid_input = 1; // 1 if needs new input, 0 if can move on
             while (invalid_input) { // Each run is getting user's choice for this decision
                 char* val;
@@ -200,6 +199,7 @@ int main() {
                 */
 
                 // display pot val and wait for button in that func
+                int input = wait_for_button(choices_len);
 
                 // Check if valid choice
                 /*
@@ -220,7 +220,7 @@ int main() {
                 lcd_clear();
                 // If valid choice, determine choice
                 switch (input) {
-                    case '4': // Split 
+                    case 4: // Split 
                         // Move 2nd card to new hand
                         addHand(player);
                         addBet(player, getCurrentBet(player));
@@ -236,7 +236,7 @@ int main() {
                         }
                         
                         break;
-                    case '3': // Double down
+                    case 3: // Double down
                         // Draw one card and move to next hand
                         addCard(current, draw(deck));
                         doubleBet(player);
@@ -249,8 +249,9 @@ int main() {
                             */
 
                             lcd_string("Busted w/ ");
-                            // HERE
-                            printf("==>");
+                            lcd_print_card(current->cards[current->numCards - 1]);
+                            lcd_set_cursor(2, 0);
+                            lcd_string("==>");
                             val = int_to_str(getHandValue(current));
                             lcd_string(val);
                             
@@ -259,12 +260,12 @@ int main() {
                         player->currentHand++;
                         current = getCurrentHand(player);
                         break;
-                    case '2': // Stay
+                    case 2: // Stay
                         // Move to next hand
                         player->currentHand++;
                         current = getCurrentHand(player);
                         break;
-                    case '1': // Hit
+                    case 1: // Hit
                         addCard(current, draw(deck));
                         // If busted, tell player
                         if (playerBust(player)) {
@@ -275,8 +276,9 @@ int main() {
                             */
 
                             lcd_string("Busted w/ ");
-                            // HERE
-                            printf("==>");
+                            lcd_print_card(current->cards[current->numCards - 1]);
+                            lcd_set_cursor(2, 0);
+                            lcd_string("==>");
                             val = int_to_str(getHandValue(current));
                             lcd_string(val);
                             
@@ -296,6 +298,7 @@ int main() {
             // Clear console
             //system("cls");
             lcd_clear();
+            usleep(5e5);
 
         } // End of while (player->currentHand < player->numHands)
 
@@ -311,7 +314,6 @@ int main() {
         */
         //Sleep(500);
 
-        // HERE
         lcd_clear();
         lcd_string("Dealer has");
         lcd_set_cursor(2, 0);
