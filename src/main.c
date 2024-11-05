@@ -12,6 +12,8 @@
 #define MAXDECKS 4 // Number of card decks in the shoe
 #define BET 1 // Fixed Bet 1 credit per hand
 
+const char* path = "/home/jaket/Desktop/raspi_blackjack-main/src/data.txt";
+
 void reshuffle(struct Player* player, struct Dealer* dealer, struct Deck** deck);
 void freeAll(struct Player* player, struct Dealer* dealer, struct Deck* deck);
 void int_to_str(int num);
@@ -28,7 +30,24 @@ int main() {
     struct Player* player = createPlayer(deck); // The player
     struct Dealer* dealer = createDealer(deck); // The dealer
 
-    player->money = BET * 10;
+    
+
+    FILE *fp = fopen(path, "r");
+    if (fp == NULL) { // File DNE, so make it and set money
+        fp = fopen(path, "w");
+        player->money = BET * 10;
+        fprintf(fp, "%d\n", player->money);
+    } else {
+        fscanf(fp, "%d", &player->money);
+        if (player->money <= 0) { // No money, so set money
+            fclose(fp);
+            fp = fopen(path, "w");
+            player->money = BET * 10;
+            fprintf(fp, "%d\n", player->money);
+        }
+    }
+    fclose(fp);
+    
 
     lcd_string("Starting...");
     usleep(2e6);
@@ -377,6 +396,10 @@ int main() {
 
         // Show player's new balance after all hands cleared
         //printf("Your new balance is %d\n", player->money);
+        fp = fopen(path, "w");
+        fprintf(fp, "%d\n", player->money);
+        fclose(fp);
+
         lcd_clear();
         int_to_str(player->money);
         lcd_string("Bal: ");
