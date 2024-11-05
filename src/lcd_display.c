@@ -34,6 +34,13 @@
 #define CLUB_LOC 2
 #define SPADE_LOC 3
 
+void lcd_byte(int bits, int mode);
+void lcd_toggle_enable(int bits);
+void lcd_delay();
+void lcd_display_action(char* action);
+int debounce_button();
+void lcd_load_custom_char(int location, const unsigned char *char_map);
+
 const unsigned char heart[8] = {
     0b00000,
     0b01010,
@@ -46,24 +53,24 @@ const unsigned char heart[8] = {
 };
 
 const unsigned char diamond[8] = {
+    0b00000,
     0b00100,
     0b01110,
     0b11111,
-    0b11111,
-    0b11111,
     0b01110,
     0b00100,
+    0b00000,
     0b00000
 };
 
 const unsigned char club[8] = {
     0b00100,
-    0b11111,
+    0b01110,
+    0b00100,
+    0b01110,
     0b11111,
     0b00100,
-    0b11111,
     0b00100,
-    0b00000,
     0b00000
 };
 
@@ -123,10 +130,10 @@ void lcd_init() {
 	//lcd_byte(LCD_HOME, LCD_CMD); // Return home
 	lcd_clear();
 
-	lcd_load_custom_char(lcd, HEART_LOC, heart);
-    lcd_load_custom_char(lcd, DIAMOND_LOC, diamond);
-    lcd_load_custom_char(lcd, CLUB_LOC, club);
-    lcd_load_custom_char(lcd, SPADE_LOC, spade);
+	lcd_load_custom_char(HEART_LOC, heart);
+    lcd_load_custom_char(DIAMOND_LOC, diamond);
+    lcd_load_custom_char(CLUB_LOC, club);
+    lcd_load_custom_char(SPADE_LOC, spade);
 
 	sleep(1);
 }
@@ -219,7 +226,6 @@ void lcd_press_enter() {
 
 
 void lcd_print_card(struct Card *c) {
-    lcd_string(c->suit);
 	switch (c->suit[0]) {
 		case 'H':
 			lcd_byte(HEART_LOC, LCD_CHR);
@@ -306,15 +312,15 @@ int wait_for_button(int choices_len) {
 }
 
 
-void lcd_load_custom_char(int lcd, int location, const unsigned char *char_map) {
+void lcd_load_custom_char(int location, const unsigned char *char_map) {
     // Limit location to 0-7
     location &= 0x07;
 
     // Set CGRAM address
-    lcd_byte(lcd, 0x40 | (location << 3), LCD_CMD);
+    lcd_byte(0x40 | (location << 3), LCD_CMD);
 
     // Write 8 bytes to define the character
     for (int i = 0; i < 8; i++) {
-        lcd_byte(lcd, char_map[i], LCD_CHR);
+        lcd_byte(char_map[i], LCD_CHR);
     }
 }
