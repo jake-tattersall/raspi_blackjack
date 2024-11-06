@@ -34,6 +34,7 @@
 #define CLUB_LOC 2                          // LCD storage of club symbol
 #define SPADE_LOC 3                         // LCD storage of spade symbol
 
+void lcd_init();
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
 void lcd_delay();
