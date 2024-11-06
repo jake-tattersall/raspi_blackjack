@@ -13,26 +13,26 @@
 #include "hand.h"
 #include "player.h"
 
-#define BUTTON 25                           // Button GPIO pin
-#define DEBOUNCE_DELAY 50                   // Delay for debouncing
+#define BUTTON 25
+#define DEBOUNCE_DELAY 50
 
-#define LCD_ADDR 0x3F                       // I2C Address of LCD
-#define LCD_CHR 1                           // Command to print char
-#define LCD_CMD 0                           // Value used to tell to perform command
-#define LCD_BACKLIGHT 0x08                  // Turns on backlight
-#define ENABLE 0b00000100                   // Used to turn on required bits for each char
+#define LCD_ADDR 0x3F
+#define LCD_CHR 1
+#define LCD_CMD 0
+#define LCD_BACKLIGHT 0x08
+#define ENABLE 0b00000100
 
-#define LCD_CLEAR 0x01                      // CMD to clear the screen
-//#define LCD_HOME 0x02                     // CMD to return home
-#define LCD_MAX_LINE_LEN 16                 // Max chars per line
+#define LCD_CLEAR 0x01
+//#define LCD_HOME 0x02
+#define LCD_MAX_LINE_LEN 16
 
-#define ADC_ADDR 0x4B                       // I2C Address of ADS7830
-#define CHANNEL 0                           // Used to write to ADC
+#define ADC_ADDR 0x4B
+#define CHANNEL 0
 
-#define HEART_LOC 0                         // LCD storage of heart symbol
-#define DIAMOND_LOC 1                       // LCD storage of diamond symbol
-#define CLUB_LOC 2                          // LCD storage of club symbol
-#define SPADE_LOC 3                         // LCD storage of spade symbol
+#define HEART_LOC 0
+#define DIAMOND_LOC 1
+#define CLUB_LOC 2
+#define SPADE_LOC 3
 
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
@@ -41,7 +41,7 @@ void lcd_display_action(char* action);
 int debounce_button();
 void lcd_load_custom_char(int location, const unsigned char *char_map);
 
-const unsigned char heart[8] = {            // LCD grid for the heart
+const unsigned char heart[8] = {
     0b00000,
     0b01010,
     0b11111,
@@ -52,7 +52,7 @@ const unsigned char heart[8] = {            // LCD grid for the heart
     0b00000
 };
 
-const unsigned char diamond[8] = {          // LCD grid for the diamond
+const unsigned char diamond[8] = {
     0b00000,
     0b00100,
     0b01110,
@@ -63,7 +63,7 @@ const unsigned char diamond[8] = {          // LCD grid for the diamond
     0b00000
 };
 
-const unsigned char club[8] = {             // LCD grid for the club
+const unsigned char club[8] = {
     0b00100,
     0b01110,
     0b00100,
@@ -74,7 +74,7 @@ const unsigned char club[8] = {             // LCD grid for the club
     0b00000
 };
 
-const unsigned char spade[8] = {            // LCD grid for the spade
+const unsigned char spade[8] = {
     0b00100,
     0b01110,
     0b11111,
@@ -86,18 +86,15 @@ const unsigned char spade[8] = {            // LCD grid for the spade
 };
 
 
-int lcd;                                    // The LCD
-int adc;                                    // The ADS7830
+int lcd;
+int adc;
 
-int cursor_pos;                             // Current cursor position (0-15)
-int current_line;                           // Current line # (1 or 2)
-char* previous_action;                      // Previous H, S, D, or V
+int cursor_pos;
+int current_line;
+char* previous_action;
 
 
-// Setup all hardware.
-// Button, LCD, and ADC
-// Return -1 if bad, 0 otherwise
-int setup() {
+void setup() {
     wiringPiSetup();
     pinMode(BUTTON, INPUT);
     pullUpDnControl(BUTTON, PUD_DOWN);
@@ -105,22 +102,21 @@ int setup() {
     lcd = wiringPiI2CSetup(LCD_ADDR);
 	if (lcd == -1) {
 		printf("bad lcd\n");
-		return -1;
+		return;
 	}
 	
 	adc = wiringPiI2CSetup(ADC_ADDR);
 	if (adc == -1) {
 		printf("bad adc\n");
-		return -1;
+		return;
 	}
 
 	lcd_init();
 
     previous_action = "";
-    return 0;
 }
 
-// Initializes the lcd
+
 void lcd_init() {
     cursor_pos = 0;
     current_line = 1;
@@ -134,7 +130,6 @@ void lcd_init() {
 	//lcd_byte(LCD_HOME, LCD_CMD); // Return home
 	lcd_clear();
 
-    // Load all custom chars
 	lcd_load_custom_char(HEART_LOC, heart);
     lcd_load_custom_char(DIAMOND_LOC, diamond);
     lcd_load_custom_char(CLUB_LOC, club);
@@ -143,7 +138,6 @@ void lcd_init() {
 	sleep(1);
 }
 
-// Write byte to LCD
 void lcd_byte(int bits, int mode) {
 	int bits_high = mode | (bits & 0xF0) | LCD_BACKLIGHT;
 	int bits_low = mode | ((bits << 4) & 0xF0) | LCD_BACKLIGHT;
@@ -157,7 +151,7 @@ void lcd_byte(int bits, int mode) {
 	lcd_delay();
 }
 
-// Enable selected bits on LCD
+
 void lcd_toggle_enable(int bits) {
 	delayMicroseconds(500);
 	wiringPiI2CWrite(lcd, (bits | ENABLE));
@@ -166,7 +160,6 @@ void lcd_toggle_enable(int bits) {
 	delayMicroseconds(500);
 }
 
-// Sends the string to the LCD screen
 void lcd_string(const char *message) {
 	while (*message) {
 	
@@ -183,9 +176,6 @@ void lcd_string(const char *message) {
 	}
 }
 
-// Sets the cursor at the specified line and pos
-// Line is from 1-2
-// Pos is from 0-15
 void lcd_set_cursor(int line, int pos) {
 	int address;
 	
@@ -202,19 +192,18 @@ void lcd_set_cursor(int line, int pos) {
 	current_line = line;
 }
 
-// Slight delay for the LCD
+
 void lcd_delay() {
 	usleep(500);
 }
 
-// Clear LCD screen and reset position
 void lcd_clear() {
     lcd_byte(LCD_CLEAR, LCD_CMD); 
     lcd_set_cursor(1, 0);
     usleep(2000);
 }
 
-// Read the value of the ADC
+
 int read_adc() {
 	wiringPiI2CWrite(adc, CHANNEL);
 	
@@ -228,14 +217,14 @@ int read_adc() {
 	return adc_val;
 }
 
-// Waits for the user to press the button
+
 void lcd_press_enter() {
     lcd_set_cursor(2, 14);
     lcd_string("PE");
     wait_for_button(0);
 }
 
-// Prints the specified card
+
 void lcd_print_card(struct Card *c) {
 	switch (c->suit[0]) {
 		case 'H':
@@ -255,13 +244,13 @@ void lcd_print_card(struct Card *c) {
     lcd_string(" ");
 }
 
-// Prints the specified hand, each card at a time
+
 void lcd_print_hand(struct Hand *h) {
     for (int i = 0; i < h->numCards; i++)
         lcd_print_card(h->cards[i]);
 }
 
-// Displays the user's current action selection
+
 void lcd_display_action(char* action) {
     // Useless to continue if already displaying
     if (strcmp(action, previous_action) == 0) return;
@@ -271,9 +260,6 @@ void lcd_display_action(char* action) {
     previous_action = action;
 }
 
-// Debounces the button.
-// Returns HIGH or LOW if proper press
-// Returns -1 if invalid press
 int debounce_button() {
     int stable_state = digitalRead(BUTTON); // Initial reading
     delay(DEBOUNCE_DELAY); // Wait for debounce period
@@ -286,8 +272,6 @@ int debounce_button() {
     return -1; 
 }
 
-// Waits for the button to be pressed
-// In the meantime, shows the user their current selection of H, S, D, or V
 int wait_for_button(int choices_len) {
     while (1) {
         int val = read_adc();
@@ -327,7 +311,7 @@ int wait_for_button(int choices_len) {
     }
 }
 
-// Loads a custom map to the LCD at the specified location
+
 void lcd_load_custom_char(int location, const unsigned char *char_map) {
     // Limit location to 0-7
     location &= 0x07;
