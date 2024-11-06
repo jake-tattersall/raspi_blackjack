@@ -12,19 +12,17 @@
 #define MAXDECKS 4 // Number of card decks in the shoe
 #define BET 1 // Fixed Bet 1 credit per hand
 
-const char* path = "/home/jaket/Desktop/raspi_blackjack-main/src/data.txt"; // Path to data file
+const char* path = "/home/jaket/Desktop/raspi_blackjack-main/src/data.txt";
 
 void reshuffle(struct Player* player, struct Dealer* dealer, struct Deck** deck);
 void freeAll(struct Player* player, struct Dealer* dealer, struct Deck* deck);
 void int_to_str(int num);
 
-char send[10]; // variable used when writing to screen
+char send[10];
 
 int main() {
-    // Setup hardware. End whole program if failed
-    if (setup() == -1) {
-        return 1;
-    }
+    // Setup hardware
+    setup();
 
     //setlocale(LC_ALL, "");
 
@@ -33,8 +31,8 @@ int main() {
     struct Dealer* dealer = createDealer(deck); // The dealer
 
     
-    // Get data from data.txt
-    FILE *fp = fopen(path, "r"); // The data file
+
+    FILE *fp = fopen(path, "r");
     if (fp == NULL) { // File DNE, so make it and set money
         fp = fopen(path, "w");
         player->money = BET * 10;
@@ -73,6 +71,14 @@ int main() {
             
             // Check if 21 has been reached by either Dealer or Player
             if (isBlackjack(dealer->hand) && isBlackjack(current)) { // Both got BJ
+                /*
+                printf("The dealer got blackjack with ");
+                printHand(dealer->hand);
+                printf("\nBut so did you with ");
+                printHand(current);
+                printf("\nNo money payed.");
+                */
+
                 lcd_clear();
                 lcd_string("D-BJ & P-BJ");
                 lcd_set_cursor(2, 0);
@@ -83,6 +89,11 @@ int main() {
                 player->currentHand++;
                 break;
             } else if (isBlackjack(dealer->hand)) { // Dealer got BJ
+                /*
+                printf("The dealer got blackjack with ");
+                printHand(dealer->hand);
+                printf("\nYou lost %d.\n", getCurrentBet(player));
+                */
                 lcd_clear();
                 lcd_string("D-BJ");
                 lcd_set_cursor(2, 0);
@@ -95,6 +106,11 @@ int main() {
                 player->currentHand++;
                 break;
             } else if (isBlackjack(current)) { // Player got BJ
+                /*
+                printf("Congratulations! You got blackjack with ");
+                printHand(current);
+                printf("\n");
+                */
                 lcd_clear();
                 lcd_string("P-BJ ");
                 lcd_print_hand(current);
@@ -105,6 +121,11 @@ int main() {
                 player->currentHand++;
                 continue;
             } else if (getHandValue(current) == 21) { // 21 but not BJ
+                /*
+                printf("You got 21 with ");
+                printHand(current);
+                printf("\n");
+                */
                 lcd_clear();
                 lcd_string("21=>");
                 lcd_print_hand(current);
@@ -134,7 +155,13 @@ int main() {
                 for (int i = 0; i < player->numHands; i++) {
                     totalBets += player->bets[i];
                 }
-
+                // Display info to user
+                /*
+                printf("Money - $%d\t Total Bets - $%d\n", player->money + totalBets, totalBets);
+                printf("Playing on hand #%d of %d\n", player->currentHand + 1, player->numHands);
+                printf("Dealer is showing a ");
+                printCard(getDealerTopCard(dealer));
+                */
                 // Print money
                 lcd_clear();
                 lcd_string("M$");
@@ -150,16 +177,53 @@ int main() {
 
                 lcd_set_cursor(2, 0);
 
+                /*
+                printf("\nYou have: ");
+                printHand(current);
+                printf("for a total of %d\n", getHandValue(current));
+                */
                 lcd_print_hand(current);
                 lcd_string("=");
                 int_to_str(getHandValue(current));
                 lcd_string(send);
 
+                /*
+                if (choices_len == 4) {
+                    printf("1-Hit\t2-Stay\t3-Double\t4-Split\n");
+                } else if (choices_len == 3) {
+                    printf("1-Hit\t2-Stay\t3-Double\n");
+                } else {
+                    printf("1-Hit\t2-Stay\n");
+                }           
+                */                 
 
-                // Display current selection and wait for button press to confirm selection
+                // Get user's choice
+
+                /*
+                scanf("%c", &input); 
+                char c;
+                while ((c=getchar()) != '\n' && c != EOF);
+                */
+
+                // display pot val and wait for button in that func
                 int input = wait_for_button(choices_len);
 
-    
+                // Check if valid choice
+                /*
+                int valid_choice = 0;
+                for (int i = 0; i < choices_len; i++) {
+                    if (input == choices[i]) {
+                        valid_choice = 1;
+                        break;
+                    }
+                }
+                if (!valid_choice) {
+                    system("cls");
+                    printf("Invalid choice\n");
+                    continue;
+                }
+                */
+
                 lcd_clear();
                 // If valid choice, determine choice
                 switch (input) {
@@ -185,6 +249,11 @@ int main() {
                         doubleBet(player);
                         // If busted, tell player
                         if (playerBust(player)) {
+                            /*
+                            printf("Sorry, you drew a ");
+                            printCard(current->cards[current->numCards - 1]);
+                            printf("giving you a total of %d. You bust!\n", getHandValue(current));
+                            */
 
                             lcd_string("Busted w/ ");
                             lcd_print_card(current->cards[current->numCards - 1]);
@@ -207,6 +276,11 @@ int main() {
                         addCard(current, draw(deck));
                         // If busted, tell player
                         if (playerBust(player)) {
+                            /*
+                            printf("Sorry, you drew a ");
+                            printCard(current->cards[current->numCards - 1]);
+                            printf("giving you a total of %d. You bust!\n", getHandValue(current));
+                            */
 
                             lcd_string("Busted w/ ");
                             lcd_print_card(current->cards[current->numCards - 1]);
@@ -228,6 +302,8 @@ int main() {
 
             } // End of while (getting_input)
             
+            // Clear console
+            //system("cls");
             lcd_clear();
             usleep(5e5);
 
@@ -238,6 +314,12 @@ int main() {
             continue;
         
         int dealerVal = getHandValue(dealer->hand);
+        /*
+        printf("The dealer has ");
+        printHand(dealer->hand);
+        printf("for a total of %d\n", dealerVal);
+        */
+        //Sleep(500);
 
         lcd_clear();
         lcd_string("Dealer has");
@@ -250,7 +332,12 @@ int main() {
             addCard(dealer->hand, draw(deck));
 
             dealerVal = getHandValue(dealer->hand);
-
+            /*
+            printf("The dealer has ");
+            printHand(dealer->hand);
+            printf("for a total of %d\n", dealerVal);
+            //Sleep(500);
+            */
             lcd_clear();
             lcd_string("Dealer has");
             lcd_set_cursor(2, 0);
@@ -265,6 +352,9 @@ int main() {
             player->currentHand = i;
             struct Hand* current = getCurrentHand(player);
             int currentVal = getHandValue(current); // current hand value
+            // printf("\nOn hand #%d, you had ", i+1);
+            // printHand(current);
+            // printf("for a total of %d\n", currentVal);
             
             int_to_str(i+1);
             lcd_string(send);
@@ -274,31 +364,38 @@ int main() {
 
         
             if (playerBust(player)) { // If hand busted
+                //printf("This hand bust. You lost $%d\n", getCurrentBet(player));
                 lcd_string(" bust -$");
                 int_to_str(getCurrentBet(player));
                 lcd_string(send);
             } else if (isBlackjack(current)) { // If had was BJ
+                //printf("This hand had blackjack! You profit $%.0f\n", 1.5 * getCurrentBet(player));
                 lcd_string(" P-BJ! +$");
                 int_to_str(getCurrentBet(player));
                 lcd_string(send);
                 blackjackPayday(player);
             } else if (dealerBust(dealer) || (!playerBust(player) && currentVal > dealerVal)) { // Player's hand won
+                //printf("This hand won! You profit $%d\n", getCurrentBet(player));
                 lcd_string(" won! +$");
                 int_to_str(getCurrentBet(player));
                 lcd_string(send);
                 payday(player);
             } else if (playerBust(player) || (!dealerBust(dealer) && dealerVal > currentVal)) { // Dealer's hand won
+                //printf("The dealer won.. You lost $%d\n", getCurrentBet(player));
                 lcd_string(" lost. -$");
                 int_to_str(getCurrentBet(player));
                 lcd_string(send);
             } else { // Push
+                //printf("This hand tied. No money payed.\n");
                 lcd_string(" pushed. +$0");
                 push(player);
             }
+            //Sleep(500);
             usleep(1e6);
         }
 
         // Show player's new balance after all hands cleared
+        //printf("Your new balance is %d\n", player->money);
         fp = fopen(path, "w");
         fprintf(fp, "%d\n", player->money);
         fclose(fp);
@@ -311,6 +408,7 @@ int main() {
     } // End of while (player->money > 0)
 
     // Player has no money :(
+    //printf("Thank you for playing!\n");
     lcd_clear();
     lcd_string("Thanks for");
     lcd_set_cursor(2, 0);
@@ -340,7 +438,6 @@ void freeAll(struct Player* player, struct Dealer* dealer, struct Deck* deck) {
     freeDeck(deck);
 }
 
-// Convert an integer to a lcd-sendable string
 void int_to_str(int num) {
     sprintf(send, "%d", num);
 }
