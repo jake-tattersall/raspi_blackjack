@@ -16,7 +16,7 @@ struct Card* createCard(char *suit, char* value);
 
 void printCard(struct Card *c);
 int cardInternalValue(struct Card *c);
-int getBJValue(struct Card *c, int total);
+int getBJValue(struct Card *c, int total, int isLast);
 void freeCard(struct Card *c);
 
 #endif

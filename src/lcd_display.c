@@ -39,6 +39,7 @@ void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
 void lcd_delay();
 void lcd_display_action(char* action);
+int read_adc();
 int debounce_button();
 void lcd_load_custom_char(int location, const unsigned char *char_map);
 

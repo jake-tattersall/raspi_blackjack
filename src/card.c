@@ -42,7 +42,8 @@ int cardInternalValue(struct Card *c) {
 }
 
 // Gets the blackjack value of the card based on the hand total (Ace is 1 or 11)
-int getBJValue(struct Card *c, int total) {
+// total and isLast help with detecting how to count the Aces
+int getBJValue(struct Card *c, int total, int isLast) {
     if (strcmp(c->value, "10") == 0)
         return 10;
     else if (strcmp(c->value, "J") == 0)
@@ -52,7 +53,7 @@ int getBJValue(struct Card *c, int total) {
     else if (strcmp(c->value, "K") == 0)
         return 10;
     else if (strcmp(c->value, "A") == 0) {
-        if (total < 11) 
+        if (isLast && total < 11) 
             return 11;
         else 
             return 1;

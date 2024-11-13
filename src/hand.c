@@ -52,12 +52,15 @@ int getHandValue(struct Hand* h) {
         if (strcmp(h->cards[i]->value, "A") == 0) {
             aces[numAces++] = h->cards[i];
         } else {
-            total += getBJValue(h->cards[i], total);
+            total += getBJValue(h->cards[i], total, 0);
         }
     }
     // Add on aces
     for (int i = 0; i < numAces; i++) {
-        total += getBJValue(aces[i], total);
+        if (i == numAces - 1) // Is last card, therefore should be an 11
+            total += getBJValue(aces[i], total, 1);
+        else
+            total += getBJValue(aces[i], total, 0);
     }
     // Free array
     free(aces);

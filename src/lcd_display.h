@@ -6,12 +6,9 @@
 
 int setup();
 
-void lcd_byte(int bits, int mode);
 void lcd_string(const char *message);
 void lcd_set_cursor(int line, int pos);
 void lcd_clear();
-
-int read_adc();
 
 void lcd_press_enter();
 void lcd_print_card(struct Card *c);
