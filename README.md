@@ -9,7 +9,7 @@ Supports hit, stand, double down, and splitting.
 Dealer stays on soft 17.
 Default bet $1.
 
-## Components used:
+## Components used
 Raspberry Pi 4B
 2x16 LCD
 Button
