@@ -10,10 +10,10 @@ Dealer stays on soft 17.
 Default bet $1.
 
 ## Components used:
-  Raspberry Pi 4B
-  2x16 LCD
-  Button
-  Potentiometer
-  ADS7830
-  10k Resistor
+Raspberry Pi 4B
+2x16 LCD
+Button
+Potentiometer
+ADS7830
+10k Resistor
 
