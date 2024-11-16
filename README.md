@@ -5,9 +5,7 @@ This code is used to play blackjack on a raspberry pi.
 
 Obviously, not for real money. Meant to be played offline.
 
-It displays information on an LCD and used a button and potentiometer.
-
-for the decision making process.
+It displays information on an LCD and uses a button and potentiometer for the decision making process.
 
 Supports hit, stand, double down, and splitting.
 
